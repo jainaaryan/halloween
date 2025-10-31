@@ -12,9 +12,9 @@
         }
         
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #000000 0%, #1a0d00 50%, #330a0a 100%);
-            color: #ff6600;
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #2c2923 0%, #3d362b 50%, #4a3e32 100%);
+            color: #c8965f;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -30,26 +30,28 @@
             width: 100%;
             padding: 30px;
             border-radius: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 3px solid #ff6600;
-            box-shadow: 0 0 30px rgba(255, 102, 0, 0.5);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { box-shadow: 0 0 20px rgba(255, 102, 0, 0.5); }
-            to { box-shadow: 0 0 40px rgba(255, 102, 0, 0.8); }
+            background: rgba(44, 41, 35, 0.8);
+            border: 1px solid #b8956b;
+            box-shadow: 0 2px 15px rgba(184, 149, 107, 0.2);
         }
         
         h1 {
-            font-size: clamp(1.8rem, 8vw, 3.5rem);
-            margin-bottom: 20px;
+            font-size: clamp(1.2rem, 5vw, 2.2rem);
+            margin-bottom: 15px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            line-height: 1.2;
+            line-height: 1.4;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-in-out;
+        }
+        
+        h1.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
         
         .emoji {
-            font-size: clamp(2rem, 10vw, 4rem);
+            font-size: clamp(2rem, 8vw, 4rem);
             margin: 0 10px;
             display: inline-block;
             animation: bounce 2s infinite;
@@ -62,21 +64,12 @@
         }
         
         .subtitle {
-            font-size: clamp(1.2rem, 5vw, 2rem);
-            margin-top: 20px;
-            color: #ffaa44;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            margin-top: 15px;
+            color: #d4b478;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
         }
         
-        .footer {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.9rem;
-            color: #888;
-            opacity: 0.7;
-        }
         
         /* Mobile optimizations */
         @media (max-width: 480px) {
@@ -90,6 +83,77 @@
             }
         }
         
+        /* Camera Widget Styles */
+        .camera-widget {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        
+        .camera-container {
+            margin-top: 20px;
+            background: rgba(44, 41, 35, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px solid #a08660;
+        }
+        
+        #video {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            background: #333;
+        }
+        
+        .camera-controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .capture-btn, .close-btn, .download-btn, .retake-btn {
+            background: #b8956b;
+            color: #2c2923;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: 'Georgia', serif;
+        }
+        
+        .close-btn {
+            background: #8a7a6b;
+            color: #f5f5f0;
+        }
+        
+        .capture-btn:hover, .download-btn:hover, .retake-btn:hover {
+            background: #d4b478;
+            transform: translateY(-1px);
+        }
+        
+        .close-btn:hover {
+            background: #9a8b7a;
+        }
+        
+        .photo-result {
+            margin-top: 15px;
+        }
+        
+        #capturedPhoto {
+            max-width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
         /* High contrast mode for better visibility */
         @media (prefers-high-contrast: active) {
             body {
@@ -107,20 +171,64 @@
 <body>
     <div class="container">
         <div class="emoji">🎃</div>
-        <h1>Welcome to my halloween costume</h1>
-        <h1 style="color: #ffaa44;">Aaryan</h1>
-        <div class="emoji">👻</div>
-        <p class="subtitle">Happy Halloween 2024! 🦇</p>
+        <h1 id="text1">Hello!</h1>
+        <h1 id="text2">Welcome to my Halloween costume.</h1>
+        <h1 id="text3">My name is Aaryan, nice to meet you!</h1>
+        <h1 id="text4">I think this festival is all about making memories with those around you!</h1>
+        <h1 id="text5">So why not celebrate it? Take a selfie! 📸</h1>
+    </div>
+
+    <!-- Camera Widget -->
+    <div class="camera-widget" id="cameraWidget">
+        <div class="camera-container" id="cameraContainer">
+            <h2 style="color: #d4b478; margin-bottom: 15px; font-size: 1.2rem; font-family: Georgia, serif;">📸 Ready for your selfie!</h2>
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+            <div class="camera-controls">
+                <button class="capture-btn" id="captureBtn">📸 Capture</button>
+                <button class="close-btn" id="closeBtn">❌ Close Camera</button>
+            </div>
+            <div class="photo-result" id="photoResult" style="display: none;">
+                <img id="capturedPhoto" alt="Your selfie">
+                <button class="download-btn" id="downloadBtn">💾 Save Photo</button>
+                <button class="retake-btn" id="retakeBtn">🔄 Retake</button>
+            </div>
+        </div>
     </div>
     
-    <div class="footer">
-        Scan successful! 📱✨
-    </div>
+</body>
     
     <script>
-        // Add some interactive sparkle effect when page loads
+        // Sequential text animation
         document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.container');
+            // Text animation sequence
+            const textElements = [
+                'text1', 'text2', 'text3', 'text4', 'text5'
+            ];
+            
+            let currentIndex = 0;
+            
+            function showNextText() {
+                if (currentIndex < textElements.length) {
+                    const element = document.getElementById(textElements[currentIndex]);
+                    element.classList.add('visible');
+                    currentIndex++;
+                    
+                    // Continue to next text after 1 second
+                    setTimeout(showNextText, 1000);
+                } else {
+                    // Show camera widget and automatically start camera after text animation completes
+                    setTimeout(() => {
+                        document.getElementById('cameraWidget').style.opacity = '1';
+                        document.getElementById('cameraWidget').style.transform = 'translateY(0)';
+                        // Automatically start camera
+                        startCamera();
+                    }, 500);
+                }
+            }
+            
+            // Start the animation after a brief delay
+            setTimeout(showNextText, 500);
             
             // Create sparkle effect
             function createSparkle() {
@@ -138,17 +246,104 @@
                 setTimeout(() => sparkle.remove(), 2000);
             }
             
-            // Create sparkles periodically
-            setInterval(createSparkle, 1500);
+            // Create sparkles periodically (start after text animation begins)
+            setTimeout(() => {
+                setInterval(createSparkle, 2000);
+            }, 3000);
+            
+            // Camera functionality
+            let stream = null;
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const cameraContainer = document.getElementById('cameraContainer');
+            const captureBtn = document.getElementById('captureBtn');
+            const closeBtn = document.getElementById('closeBtn');
+            const photoResult = document.getElementById('photoResult');
+            const capturedPhoto = document.getElementById('capturedPhoto');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+            
+            // Start camera automatically
+            async function startCamera() {
+                try {
+                    // Request camera access (prefer front camera for selfies)
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            facingMode: 'user',  // Front camera
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        },
+                        audio: false
+                    });
+                    
+                    video.srcObject = stream;
+                    photoResult.style.display = 'none';
+                    
+                } catch (err) {
+                    console.error('Error accessing camera:', err);
+                    // Show a friendly message in the camera area instead of alert
+                    document.getElementById('cameraContainer').innerHTML = `
+                        <div style="color: #d4b478; padding: 20px; text-align: center; font-family: Georgia, serif;">
+                            <h3>📷 Camera Access Needed</h3>
+                            <p>Please allow camera access to take a selfie!</p>
+                            <p style="font-size: 0.9rem; margin-top: 10px; color: #b8956b;">
+                                Refresh the page and grant camera permissions when prompted.
+                            </p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Capture photo
+            captureBtn.addEventListener('click', () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0);
+                
+                const imageData = canvas.toDataURL('image/png');
+                capturedPhoto.src = imageData;
+                photoResult.style.display = 'block';
+            });
+            
+            // Download photo
+            downloadBtn.addEventListener('click', () => {
+                const link = document.createElement('a');
+                link.download = 'halloween-selfie-with-aaryan.png';
+                link.href = capturedPhoto.src;
+                link.click();
+            });
+            
+            // Retake photo
+            retakeBtn.addEventListener('click', () => {
+                photoResult.style.display = 'none';
+            });
+            
+            // Close camera
+            closeBtn.addEventListener('click', () => {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                document.getElementById('cameraWidget').style.opacity = '0';
+                document.getElementById('cameraWidget').style.transform = 'translateY(20px)';
+                photoResult.style.display = 'none';
+            });
         });
         
-        // Add CSS for sparkle animation
+        // Add CSS for sparkle animation and camera widget initial state
         const style = document.createElement('style');
         style.textContent = `
             @keyframes sparkle {
                 0% { opacity: 0; transform: scale(0) rotate(0deg); }
                 50% { opacity: 1; transform: scale(1) rotate(180deg); }
                 100% { opacity: 0; transform: scale(0) rotate(360deg); }
+            }
+            
+            .camera-widget {
+                opacity: 0;
+                transform: translateY(20px);
+                transition: all 0.8s ease-in-out;
             }
         `;
         document.head.appendChild(style);
